@@ -17,10 +17,53 @@ import DevfileEditor from '../';
 import { BrandingData } from '../../../services/bootstrap/branding.constant';
 import { FakeStoreBuilder } from '../../../store/__mocks__/storeBuilder';
 import { createFakeCheWorkspace } from '../../../store/__mocks__/workspace';
-import { languages, editor } from 'monaco-editor-core/esm/vs/editor/editor.main';
 
-jest.mock('../../../../node_modules/monaco-editor-core/esm/vs/editor/editor.main', () => {
-  return () => ({ languages, editor });
+jest.mock('monaco-editor-core/esm/vs/editor/editor.main', () => {
+  return {
+    languages: {
+      registerCompletionItemProvider: jest.fn(),
+      registerDocumentSymbolProvider: jest.fn(),
+      registerHoverProvider: jest.fn(),
+      register: jest.fn(),
+      setMonarchTokensProvider: jest.fn(),
+      setLanguageConfiguration: jest.fn(),
+      CompletionItemInsertTextRule: {
+        InsertAsSnippet: jest.fn()
+      }
+    },
+    editor: {
+      create: jest.fn(),
+      getModel: jest.fn(),
+      getValue: jest.fn(),
+      setModelMarkers: jest.fn(),
+      defineTheme: jest.fn(),
+      setTheme: jest.fn()
+    }
+  };
+});
+
+jest.mock('../../../services/monacoThemeRegister', () => {
+  return {
+    initDefaultEditorTheme: () => ''
+  };
+});
+
+jest.mock('../monaco-converter', () => {
+  class ProtocolToMonacoConverter {
+    asCompletionResult = jest.fn();
+    asCompletionItem = jest.fn();
+    asSymbolInformations = jest.fn();
+    asHover = jest.fn();
+    asDiagnostics = jest.fn();
+  }
+  class MonacoToProtocolConverter {
+    asPosition = jest.fn();
+    asCompletionItem = jest.fn();
+  }
+  return {
+    ProtocolToMonacoConverter,
+    MonacoToProtocolConverter
+  };
 });
 
 describe('The DevfileEditor component', () => {
