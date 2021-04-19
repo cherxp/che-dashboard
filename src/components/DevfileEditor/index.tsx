@@ -15,7 +15,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { AppState } from '../../store';
 import { DisposableCollection } from '../../services/helpers/disposable';
 import { ProtocolToMonacoConverter, MonacoToProtocolConverter } from './monaco-converter';
-import { languages, editor } from 'monaco-editor-core/esm/vs/editor/editor.main';
+import { languages, editor, Position, IRange, LanguageConfiguration, IMonarchLanguage } from 'monaco-editor-core/esm/vs/editor/editor.main';
 import { TextDocument, getLanguageService } from 'yaml-language-server';
 import { initDefaultEditorTheme } from '../../services/monacoThemeRegister';
 import { safeLoad } from 'js-yaml';
@@ -96,8 +96,8 @@ export class DevfileEditor extends React.PureComponent<Props, State> {
         aliases: ['YAML'],
         mimetypes: ['application/json'],
       });
-      languages.setMonarchTokensProvider(LANGUAGE_ID, language as any);
-      languages.setLanguageConfiguration(LANGUAGE_ID, conf as any);
+      languages.setMonarchTokensProvider(LANGUAGE_ID, language);
+      languages.setLanguageConfiguration(LANGUAGE_ID, conf);
       // register language server providers
       this.registerLanguageServerProviders(languages);
     }
@@ -231,7 +231,7 @@ export class DevfileEditor extends React.PureComponent<Props, State> {
     const { errorMessage } = this.state;
 
     let message = errorMessage;
-    if (this.props.isReadonly !== undefined && this.props.isReadonly === true) {
+    if (this.props.isReadonly) {
       message = 'DevWorkspace editor support has not been enabled. Editor is in Readonly mode.';
     }
 
@@ -244,8 +244,8 @@ export class DevfileEditor extends React.PureComponent<Props, State> {
     );
   }
 
-  private getDecorations(): any[] {
-    const decorations: any[] = [];
+  private getDecorations(): editor.IModelDecoration[] {
+    const decorations: editor.IModelDecoration[] = [];
     if (this.props.decorationPattern) {
       const decorationRegExp = new RegExp(this.props.decorationPattern, 'img');
       const model = this.editor.getModel();
@@ -330,7 +330,7 @@ export class DevfileEditor extends React.PureComponent<Props, State> {
     };
 
     languages.registerCompletionItemProvider(LANGUAGE_ID, {
-      provideCompletionItems(model, position) {
+      provideCompletionItems(model: editor.ITextModel, position: Position) {
         const document = createDocument(model);
         return yamlService.doComplete(document, m2p.asPosition(position.lineNumber, position.column), true)
           .then(list => {
@@ -339,7 +339,7 @@ export class DevfileEditor extends React.PureComponent<Props, State> {
               startLineNumber: position.lineNumber,
               endColumn: position.column,
               endLineNumber: position.lineNumber,
-            });
+            } as IRange);
             if (!completionResult || !completionResult.suggestions) {
               return completionResult;
             }

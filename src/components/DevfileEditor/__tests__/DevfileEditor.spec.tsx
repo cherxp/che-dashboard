@@ -20,6 +20,10 @@ import { createFakeCheWorkspace } from '../../../store/__mocks__/workspace';
 
 jest.mock('monaco-editor-core/esm/vs/editor/editor.main', () => {
   return {
+    LanguageConfiguration: typeof {},
+    IMonarchLanguage: typeof {},
+    Position: typeof {},
+    IRange: typeof {},
     languages: {
       registerCompletionItemProvider: jest.fn(),
       registerDocumentSymbolProvider: jest.fn(),
@@ -32,6 +36,7 @@ jest.mock('monaco-editor-core/esm/vs/editor/editor.main', () => {
       }
     },
     editor: {
+      IModelDecoration: typeof [],
       create: jest.fn(),
       getModel: jest.fn(),
       getValue: jest.fn(),
