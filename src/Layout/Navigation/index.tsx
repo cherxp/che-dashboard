@@ -54,18 +54,18 @@ export class Navigation extends React.PureComponent<Props, State> {
   constructor(props: Props) {
     super(props);
 
-    let activePath = this.props.history.location.pathname.split('&')[0];
-    if (activePath === ROUTE.HOME) {
-      const workspacesNumber = this.props.allWorkspaces.length;
-      if (workspacesNumber === 0) {
-        activePath = buildGettingStartedPath('get-started');
-      } else {
-        activePath = buildWorkspacesPath();
-      }
-    }
-    if (this.props.history.location.pathname !== activePath) {
-      this.props.history.replace(activePath);
-    }
+    const activePath = this.props.history.location.pathname.split('&')[0];
+    // if (activePath === ROUTE.HOME) {
+    //   const workspacesNumber = this.props.allWorkspaces.length;
+    //   if (workspacesNumber === 0) {
+    //     activePath = buildGettingStartedPath('get-started');
+    //   } else {
+    //     activePath = buildWorkspacesPath();
+    //   }
+    // }
+    // if (this.props.history.location.pathname !== activePath) {
+    //   this.props.history.replace(activePath);
+    // }
 
     this.state = {
       activePath,
