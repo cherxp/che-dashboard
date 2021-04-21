@@ -319,6 +319,7 @@ export class FactoryLoaderContainer extends React.PureComponent<Props, State> {
       workspace = this.props.allWorkspaces[0];
       console.log(`Workspace ${workspace.id} already exists, using it`);
 
+      // Update the stack name with the factory url
       if (workspace.ref) {
         const cheworkspace = workspace.ref as che.Workspace;
         if (cheworkspace.attributes) {
@@ -333,6 +334,7 @@ export class FactoryLoaderContainer extends React.PureComponent<Props, State> {
         console.log(`Workspace ${workspace.id} factory url changed to ${cheworkspace.attributes.stackName}`);
       }
 
+      // Update the workspace
       await this.props.updateWorkspace(workspace);
       console.log(`Workspace ${workspace.id} updated`);
     }
