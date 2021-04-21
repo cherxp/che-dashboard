@@ -301,18 +301,42 @@ export class FactoryLoaderContainer extends React.PureComponent<Props, State> {
 
   private async resolveWorkspace(devfile: api.che.workspace.devfile.Devfile, attrs: { [key: string]: string }): Promise<Workspace | undefined> {
     let workspace: Workspace | undefined;
-    if (this.state.createPolicy === 'peruser') {
-      workspace = this.props.allWorkspaces.find(workspace => {
-        if (isWorkspaceV1(workspace.ref)) {
-          // looking for the stack name attribute in Che workspace
-          return workspace.ref.attributes && workspace.ref.attributes.stackName === attrs.stackName;
+    // if (this.state.createPolicy === 'peruser') {
+    //   workspace = this.props.allWorkspaces.find(workspace => {
+    //     if (isWorkspaceV1(workspace.ref)) {
+    //       // looking for the stack name attribute in Che workspace
+    //       return workspace.ref.attributes && workspace.ref.attributes.stackName === attrs.stackName;
+    //     }
+    //     else {
+    //       // ignore createPolicy for dev workspaces
+    //       return false;
+    //     }
+    //   });
+    // }
+
+    // Check if a workspace already exists for the user
+    if (this.props.allWorkspaces.length > 0) {
+      workspace = this.props.allWorkspaces[0];
+      console.log(`Workspace ${workspace.id} already exists, using it`);
+
+      if (workspace.ref) {
+        const cheworkspace = workspace.ref as che.Workspace;
+        if (cheworkspace.attributes) {
+          cheworkspace.attributes.stackName = attrs.stackName;
+        } else {
+          cheworkspace.attributes = {
+            infrastructureNamespace: '',
+            created: '',
+            stackName: attrs.stackName
+          };
         }
-        else {
-          // ignore createPolicy for dev workspaces
-          return false;
-        }
-      });
+        console.log(`Workspace ${workspace.id} factory url changed to ${cheworkspace.attributes.stackName}`);
+      }
+
+      await this.props.updateWorkspace(workspace);
+      console.log(`Workspace ${workspace.id} updated`);
     }
+
     if (!workspace) {
       try {
         workspace = await this.props.createWorkspaceFromDevfile(devfile, undefined, undefined, attrs);
