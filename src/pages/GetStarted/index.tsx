@@ -68,7 +68,8 @@ export class GetStarted extends React.PureComponent<Props, State> {
   private getTitle(): string {
     const productName = this.props.branding.data.name;
     const titles: { [key in GettingStartedTab]: string } = {
-      'get-started': `Getting Started with ${productName}`,
+      // 'get-started': `Getting Started with ${productName}`,
+      'get-started': `Getting Started with ${productName} Xpress`,
       'custom-workspace': 'Create Custom Workspace',
     };
     return titles[this.state.activeTabKey];

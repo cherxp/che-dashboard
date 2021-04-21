@@ -434,7 +434,7 @@ export default class WorkspacesList extends React.PureComponent<Props, State> {
           <TextContent>
             <Text component={'h1'}>Workspaces</Text>
             <Text component={'p'}>
-              A workspace is where your projects live and run.
+              Xpress workspace is where your projects live and run.
               Create workspaces from stacks that define projects, runtimes, and commands.&emsp;
               <a
                 href={workspacesDocsLink}

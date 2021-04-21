@@ -63,9 +63,9 @@ export class Navigation extends React.PureComponent<Props, State> {
     //     activePath = buildWorkspacesPath();
     //   }
     // }
-    // if (this.props.history.location.pathname !== activePath) {
-    //   this.props.history.replace(activePath);
-    // }
+    if (this.props.history.location.pathname !== activePath) {
+      this.props.history.replace(activePath);
+    }
 
     this.state = {
       activePath,
